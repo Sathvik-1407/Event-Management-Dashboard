@@ -2,7 +2,6 @@
   <div>
     <h2>Task Tracker</h2>
 
-    <!-- Alert -->
     <div v-if="alertMessage" :class="`alert ${alertClass}`" role="alert">
       {{ alertMessage }}
     </div>
@@ -189,7 +188,7 @@ export default {
       this.alertMessage = message;
       this.alertClass = alertClass;
       setTimeout(() => {
-        this.alertMessage = ""; // Clear the alert after 3 seconds
+        this.alertMessage = ""; 
       }, 3000);
     },
   },

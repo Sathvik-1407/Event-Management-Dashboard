@@ -3,7 +3,6 @@
     <h2>Attendee Management</h2>
     <button class="btn btn-primary mb-3" @click="showAddModal = true">Add Attendee</button>
 
-    <!-- Bootstrap alert for success or error -->
     <div v-if="alertMessage" :class="`alert ${alertClass}`" role="alert">
       {{ alertMessage }}
     </div>
@@ -90,7 +89,6 @@ export default {
       });
     },
     createAttendee() {
-      // Show info alert before starting the create operation
       this.setAlert('Creating new attendee...', 'alert-info');
 
       axios.post('http://localhost:5000/api/attendee/create', this.formData).then(() => {
@@ -116,7 +114,7 @@ export default {
       this.alertMessage = message;
       this.alertClass = alertClass;
       setTimeout(() => {
-        this.alertMessage = '';  // Hide the alert after 3 seconds
+        this.alertMessage = ''; 
       }, 3000);
     }
   },

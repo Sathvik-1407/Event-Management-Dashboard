@@ -2,8 +2,7 @@
   <div>
     <h2>Event Management</h2>
     <button class="btn btn-primary mb-3" @click="showAddModal = true">Add Event</button>
-
-    <!-- Bootstrap alert for success, error, or info -->
+    
     <div v-if="alertMessage" :class="`alert ${alertClass}`" role="alert">
       {{ alertMessage }}
     </div>
@@ -93,7 +92,6 @@ export default {
       });
     },
     createEvent() {
-      // Trigger info alert when form is submitted (create operation)
       this.setAlert('Creating new event...', 'alert-info');
 
       axios.post('http://localhost:5000/api/event/create', this.formData).then(() => {
@@ -108,10 +106,8 @@ export default {
       this.formData = { ...event };
       this.editMode = true;
       this.showAddModal = true;
-      // No info alert here; only when submitting the form
     },
     updateEvent() {
-      // Trigger info alert when form is submitted (update operation)
       this.setAlert('Updating event...', 'alert-info');
 
       axios.put(`http://localhost:5000/api/event/update/${this.formData.id}`, this.formData).then(() => {
@@ -137,7 +133,7 @@ export default {
       this.alertMessage = message;
       this.alertClass = alertClass;
       setTimeout(() => {
-        this.alertMessage = '';  // Hide the alert after 3 seconds
+        this.alertMessage = '';
       }, 3000);
     }
   },
