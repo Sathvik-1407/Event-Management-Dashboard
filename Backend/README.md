@@ -113,13 +113,6 @@ This backend is built to support a Task Tracker application, providing APIs for 
 5. Open a pull request.
 
 ---
-
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for details.
-
----
-
 ## Contact
 
 For questions or support, please contact:
