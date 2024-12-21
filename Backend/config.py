@@ -1,6 +1,6 @@
 DB_CONFIG = {
     'host': 'localhost',
     'user': 'root',
-    'password': 'your-password',
+    'password': 'sathvik',
     'database': 'event_management'
 }

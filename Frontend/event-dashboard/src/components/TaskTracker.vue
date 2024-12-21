@@ -2,6 +2,11 @@
   <div>
     <h2>Task Tracker</h2>
 
+    <!-- Alert -->
+    <div v-if="alertMessage" :class="`alert ${alertClass}`" role="alert">
+      {{ alertMessage }}
+    </div>
+
     <div class="d-flex justify-content-between mb-3">
       <div class="dropdown">
         <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -85,7 +90,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import axios from "axios";
 
@@ -101,9 +105,11 @@ export default {
         deadline: "",
         assigned_attendee_id: null,
         event_id: null,
-        status: "Pending", 
+        status: "Pending",
       },
       selectedEventId: null,
+      alertMessage: "",
+      alertClass: "",
     };
   },
   methods: {
@@ -112,13 +118,16 @@ export default {
       this.fetchTasks(eventId);
     },
     fetchTasks(eventId) {
+      this.setAlert("Fetching tasks...", "alert-info");
       axios
         .get(`http://localhost:5000/api/tasks/fetch/${eventId}`)
         .then((response) => {
           this.tasks = response.data;
+          this.setAlert("Tasks fetched successfully!", "alert-success");
         })
         .catch((error) => {
           console.error("Error fetching tasks:", error);
+          this.setAlert("Failed to fetch tasks.", "alert-danger");
         });
     },
     fetchAttendees() {
@@ -142,27 +151,30 @@ export default {
         });
     },
     createTask() {
+      this.setAlert("Creating task...", "alert-info");
       axios
         .post("http://localhost:5000/api/tasks/create", this.formData)
         .then(() => {
-          this.fetchTasks(this.formData.event_id); 
+          this.fetchTasks(this.formData.event_id);
           this.showAddModal = false;
+          this.setAlert("Task created successfully!", "alert-success");
         })
         .catch((error) => {
           console.error("Error creating task:", error);
+          this.setAlert("Failed to create task.", "alert-danger");
         });
     },
     updateTaskStatus(id, status) {
-      console.log("Updating task with ID:", id, "Status:", status);
+      this.setAlert(`Updating task status to ${status}...`, "alert-info");
       axios
         .put(`http://localhost:5000/api/tasks/update/${id}`, { status })
         .then(() => {
-          console.log("Task status updated successfully");
           this.fetchTasks(this.selectedEventId);
+          this.setAlert(`Task marked as ${status}!`, "alert-success");
         })
         .catch((error) => {
           console.error("Error updating task status:", error);
-          alert("There was an error updating the task status.");
+          this.setAlert("Failed to update task status.", "alert-danger");
         });
     },
     getAttendeeName(attendeeId) {
@@ -173,10 +185,17 @@ export default {
       const event = this.events.find((event) => event.id === eventId);
       return event ? event.name : "Unknown";
     },
+    setAlert(message, alertClass) {
+      this.alertMessage = message;
+      this.alertClass = alertClass;
+      setTimeout(() => {
+        this.alertMessage = ""; // Clear the alert after 3 seconds
+      }, 3000);
+    },
   },
   mounted() {
-    this.fetchEvents(); 
-    this.fetchAttendees(); 
+    this.fetchEvents();
+    this.fetchAttendees();
     if (this.events.length > 0) {
       this.fetchTasks(this.events[0].id);
     }

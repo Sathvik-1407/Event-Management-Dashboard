@@ -2,6 +2,12 @@
   <div>
     <h2>Event Management</h2>
     <button class="btn btn-primary mb-3" @click="showAddModal = true">Add Event</button>
+
+    <!-- Bootstrap alert for success, error, or info -->
+    <div v-if="alertMessage" :class="`alert ${alertClass}`" role="alert">
+      {{ alertMessage }}
+    </div>
+
     <table class="table table-bordered">
       <thead>
         <tr>
@@ -75,7 +81,9 @@ export default {
         description: '',
         location: '',
         event_date: ''
-      }
+      },
+      alertMessage: '',
+      alertClass: ''
     };
   },
   methods: {
@@ -85,27 +93,52 @@ export default {
       });
     },
     createEvent() {
+      // Trigger info alert when form is submitted (create operation)
+      this.setAlert('Creating new event...', 'alert-info');
+
       axios.post('http://localhost:5000/api/event/create', this.formData).then(() => {
         this.fetchEvents();
         this.showAddModal = false;
+        this.setAlert('Event created successfully!', 'alert-success');
+      }).catch(() => {
+        this.setAlert('Failed to create event. Please try again.', 'alert-danger');
       });
     },
     editEvent(event) {
       this.formData = { ...event };
       this.editMode = true;
       this.showAddModal = true;
+      // No info alert here; only when submitting the form
     },
     updateEvent() {
+      // Trigger info alert when form is submitted (update operation)
+      this.setAlert('Updating event...', 'alert-info');
+
       axios.put(`http://localhost:5000/api/event/update/${this.formData.id}`, this.formData).then(() => {
         this.fetchEvents();
         this.showAddModal = false;
         this.editMode = false;
+        this.setAlert('Event updated successfully!', 'alert-success');
+      }).catch(() => {
+        this.setAlert('Failed to update event. Please try again.', 'alert-danger');
       });
     },
     deleteEvent(id) {
+      this.setAlert('Deleting event...', 'alert-info');
+
       axios.delete(`http://localhost:5000/api/event/delete/${id}`).then(() => {
         this.fetchEvents();
+        this.setAlert('Event deleted successfully!', 'alert-success');
+      }).catch(() => {
+        this.setAlert('Failed to delete event. Please try again.', 'alert-danger');
       });
+    },
+    setAlert(message, alertClass) {
+      this.alertMessage = message;
+      this.alertClass = alertClass;
+      setTimeout(() => {
+        this.alertMessage = '';  // Hide the alert after 3 seconds
+      }, 3000);
     }
   },
   mounted() {

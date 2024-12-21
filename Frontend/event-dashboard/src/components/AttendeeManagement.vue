@@ -2,6 +2,12 @@
   <div>
     <h2>Attendee Management</h2>
     <button class="btn btn-primary mb-3" @click="showAddModal = true">Add Attendee</button>
+
+    <!-- Bootstrap alert for success or error -->
+    <div v-if="alertMessage" :class="`alert ${alertClass}`" role="alert">
+      {{ alertMessage }}
+    </div>
+
     <table class="table table-bordered">
       <thead>
         <tr>
@@ -54,7 +60,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import axios from 'axios';
 
@@ -68,7 +73,9 @@ export default {
         name: '',
         email: '',
         event_id: null
-      }
+      },
+      alertMessage: '',
+      alertClass: ''
     };
   },
   methods: {
@@ -83,15 +90,34 @@ export default {
       });
     },
     createAttendee() {
+      // Show info alert before starting the create operation
+      this.setAlert('Creating new attendee...', 'alert-info');
+
       axios.post('http://localhost:5000/api/attendee/create', this.formData).then(() => {
         this.fetchAttendees();
         this.showAddModal = false;
+        this.setAlert('Attendee added successfully!', 'alert-success');
+      }).catch(() => {
+        this.setAlert('Failed to add attendee. Please try again.', 'alert-danger');
       });
     },
     deleteAttendee(id) {
       axios.delete(`http://localhost:5000/api/attendee/delete/${id}`).then(() => {
         this.fetchAttendees();
+        this.setAlert('Attendee deleted successfully!', 'alert-success');
+      }).catch(() => {
+        this.setAlert('Failed to delete attendee. Please try again.', 'alert-danger');
       });
+    },
+    showInfoAlert() {
+      this.setAlert('Creating new attendee...', 'alert-info');
+    },
+    setAlert(message, alertClass) {
+      this.alertMessage = message;
+      this.alertClass = alertClass;
+      setTimeout(() => {
+        this.alertMessage = '';  // Hide the alert after 3 seconds
+      }, 3000);
     }
   },
   mounted() {
