@@ -17,7 +17,7 @@ This backend is built to support a Task Tracker application, providing APIs for 
 ## Technologies Used
 
 - **Framework**: Flask
-- **Database**: SQLite (default) or any SQL database compatible with SQLAlchemy
+- **Database**: MySQL
 - **HTTP Client**: Flask-RESTful for API endpoints
 - **CORS Handling**: Flask-CORS
 
